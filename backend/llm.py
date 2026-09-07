@@ -21,18 +21,19 @@ MODELS = [
 
 
 def generate_answer(question: str, context: str):
-
     prompt = f"""
 You are an HR Policy Assistant.
 
 Answer the employee's question using ONLY the HR policy context provided below.
 
 Rules:
-1. Do not use outside knowledge.
-2. If the context does not contain enough information to answer the question, say:
+1. Answer only the employee's specific question.
+2. Do not provide a general overview unless the question asks for one.
+3. Do not use outside knowledge.
+4. If the context does not contain enough information to answer the question, say:
    "The HR policy does not provide this information. Please contact HR."
-3. Do not make up or assume any policy.
-4. Keep the answer clear and concise.
+5. Do not make up or assume any policy.
+6. Keep the answer clear and concise.
 
 HR POLICY CONTEXT:
 {context}
@@ -44,11 +45,8 @@ EMPLOYEE QUESTION:
     last_error = None
 
     for model in MODELS:
-
-        for attempt in range(2):
-
+        for attempt in range(3):
             try:
-
                 print(
                     f"Trying Gemini model: {model}, "
                     f"attempt: {attempt + 1}"
@@ -62,19 +60,30 @@ EMPLOYEE QUESTION:
                 return response.text
 
             except Exception as e:
-
                 last_error = e
 
                 print(
                     f"Gemini error with {model}: {e}"
                 )
 
-                # Wait before retrying
-                if attempt == 0:
-                    time.sleep(5)
+                # Retry temporary Gemini errors
+                if "503" in str(e) or "UNAVAILABLE" in str(e):
+                    if attempt < 2:
+                        wait_time = 10 * (attempt + 1)
+                        print(
+                            f"Gemini temporarily unavailable. "
+                            f"Retrying in {wait_time} seconds..."
+                        )
+                        time.sleep(wait_time)
+                    else:
+                        print(
+                            f"{model} failed after 3 attempts. "
+                            f"Trying next model..."
+                        )
+                else:
+                    break
 
     raise RuntimeError(
-        f"Gemini service is temporarily unavailable. "
+        "Gemini service is temporarily unavailable. "
         f"Last error: {last_error}"
     )
-
