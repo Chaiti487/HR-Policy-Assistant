@@ -183,7 +183,7 @@ async def ask_question(request: QuestionRequest):
 
     results = vector_store.search(
         request.question,
-        n_results=3
+        n_results=2
     )
 
     documents = results["documents"][0]
