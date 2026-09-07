@@ -17,8 +17,8 @@ Instead of sending the entire policy collection directly to the LLM, the system 
 
 ```text
 ┌─────────────────────────┐
-│    Admin Uploads        │
-│    HR Policy Documents  │
+│     Admin Uploads       │
+│     HR Policy Documents │
 └────────────┬────────────┘
              ↓
 ┌─────────────────────────┐
@@ -27,14 +27,14 @@ Instead of sending the entire policy collection directly to the LLM, the system 
 └────────────┬────────────┘
              ↓
 ┌─────────────────────────┐
-│   Section Detection     │
+│    Section Detection    │
 │       & Chunking        │
 │   100 words / 20 overlap│
 └────────────┬────────────┘
              ↓
 ┌─────────────────────────┐
-│      Embeddings         │
-│   all-MiniLM-L6-v2      │
+│       Embeddings        │
+│  gemini-embedding-001   │
 └────────────┬────────────┘
              ↓
 ┌─────────────────────────┐
@@ -50,7 +50,7 @@ Instead of sending the entire policy collection directly to the LLM, the system 
 └────────────┬────────────┘
              ↓
 ┌─────────────────────────┐
-│   Similarity Search     │
+│    Similarity Search    │
 │       Top 3 Chunks      │
 └────────────┬────────────┘
              ↓
@@ -59,12 +59,12 @@ Instead of sending the entire policy collection directly to the LLM, the system 
 │         Check           │
 └───────┬─────────┬───────┘
         │         │
-   Relevant     Not Relevant
+   Relevant   Not Relevant
         │         │
         ↓         ↓
 ┌──────────────┐  ┌──────────────────────┐
 │    Gemini    │  │     Safe Refusal     │
-│   Generate   │  │  "Policy does not    │
+│   Generate   │  │  "Policy does not   │
 │    Answer    │  │   provide this..."   │
 └──────┬───────┘  └──────────────────────┘
        ↓
@@ -107,7 +107,7 @@ The system consists of the following major components:
 
 5. **Embedding Model**
 
-   * Uses `all-MiniLM-L6-v2`.
+   * Uses **`gemini-embedding-001`**.
    * Converts policy chunks and questions into embeddings.
 
 6. **ChromaDB**
@@ -134,28 +134,28 @@ The system consists of the following major components:
                                │
                                ↓
                     ┌─────────────────────┐
-                    │   RAG Pipeline      │
+                    │    RAG Pipeline     │
                     └──────────┬──────────┘
                                │
                  ┌─────────────┴─────────────┐
                  ↓                           ↓
         ┌─────────────────┐         ┌─────────────────┐
-        │ Sentence        │         │    ChromaDB     │
-        │ Transformer     │────────→│ Vector Storage  │
+        │     Gemini      │────────→│    ChromaDB     │
+        │    Embedding    │         │  Vector Storage │
         └─────────────────┘         └────────┬────────┘
                                              │
                                              │ Relevant Chunks
                                              ↓
-                                    ┌─────────────────┐
-                                    │      Gemini     │
-                                    │       LLM       │
-                                    └────────┬────────┘
-                                             │
-                                             ↓
-                                    ┌─────────────────┐
-                                    │ Answer + Source │
-                                    │   Citations     │
-                                    └─────────────────┘
+                                      ┌─────────────────┐
+                                      │      Gemini     │
+                                      │       LLM       │
+                                      └────────┬────────┘
+                                               │
+                                               ↓
+                                      ┌─────────────────┐
+                                      │ Answer + Source │
+                                      │    Citations    │
+                                      └─────────────────┘
 
 
                     ┌─────────────────────┐
@@ -173,7 +173,7 @@ The system consists of the following major components:
                     └──────────┬──────────┘
                                ↓
                     ┌─────────────────────┐
-                    │    ChromaDB         │
+                    │      ChromaDB       │
                     └─────────────────────┘
 ```
 
@@ -331,7 +331,7 @@ Responsible for embedding generation and ChromaDB operations.
 Main responsibilities:
 
 * Initialize ChromaDB
-* Load `all-MiniLM-L6-v2`
+* Initialize Gemini embedding service
 * Generate embeddings
 * Store policy chunks
 * Search similar chunks
@@ -343,7 +343,7 @@ The vector store uses cosine distance.
 ```text
 Policy Chunk
      ↓
-Sentence Transformer
+Gemini Embedding Model
      ↓
 Embedding Vector
      ↓
@@ -355,7 +355,7 @@ For a question:
 ```text
 Question
    ↓
-Embedding
+Gemini Embedding
    ↓
 ChromaDB Search
    ↓
@@ -409,7 +409,7 @@ Is Result Relevant?
       / \
     Yes  No
      ↓    ↓
- Gemini  Safe Refusal
+  Gemini  Safe Refusal
 ```
 
 A relevance threshold is used to reject clearly unrelated questions.
@@ -528,13 +528,14 @@ For production, stronger authentication and authorization should be implemented.
 
 ## 9. Design Trade-offs
 
-### Local Embeddings
+### Gemini Embeddings
 
 Advantages:
 
-* No additional embedding API cost
-* Suitable for a small HR policy collection
-* Keeps embedding generation local
+* Avoids running a local embedding model
+* Reduces local memory requirements
+* Suitable for the small HR policy collection
+* Simplifies deployment on resource-limited environments
 
 ### ChromaDB
 
@@ -604,6 +605,4 @@ The main design principle is:
 
 > Retrieve first → Ground the answer → Generate the response → Cite the source
 
-
-
-
+```
