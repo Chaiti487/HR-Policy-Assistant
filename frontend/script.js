@@ -1,4 +1,4 @@
-const API_URL = "http://127.0.0.1:8000";
+const API_URL = "https://hr-policy-assistant-ji8i.onrender.com";
 
 // ==========================================
 // ASK HR POLICY QUESTION
