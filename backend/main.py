@@ -7,7 +7,8 @@ from vector_store import VectorStore
 from ask import QuestionRequest
 from llm import generate_answer
 
-DEFAULT_POLICY_DIR = "../sample_policies"
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DEFAULT_POLICY_DIR = os.path.join(BASE_DIR,"sample_policies")
 
 def load_default_policies():
 

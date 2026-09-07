@@ -1,8 +1,9 @@
+import os
 import chromadb
 from sentence_transformers import SentenceTransformer
 
 
-CHROMA_PATH = "./chroma_db"
+CHROMA_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),"chroma_db")
 
 COLLECTION_NAME = "hr_policies"
 
