@@ -15,8 +15,8 @@ client = genai.Client(api_key=api_key)
 
 
 MODELS = [
+    "gemini-3.5-flash-lite",
     "gemini-3.6-flash",
-    "gemini-3.7-flash",
 ]
 
 
