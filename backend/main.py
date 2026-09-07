@@ -69,7 +69,7 @@ app.add_middleware(
     allow_origins=[
         "http://127.0.0.1:5500",
         "http://localhost:5500",
-        "https://hr-policy-assistant-59v41gwr8-chaiti-sens-projects.vercel.app"
+        "https://hr-policy-assistant-alpha.vercel.app/"
         ],
     allow_credentials=True,
     allow_methods=["*"],
