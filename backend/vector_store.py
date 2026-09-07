@@ -148,6 +148,31 @@ class VectorStore:
 
         return sorted(documents)
 
+    def get_document_chunks(self, document_name):
+        data = self.vector_store.get(
+            where={"document_name": document_name},
+            include=["documents", "metadatas"]
+        )
+
+        chunks = []
+
+        for document, metadata in zip(
+            data["documents"],
+            data["metadatas"]
+        ):
+            chunks.append({
+                "text": document,
+                "metadata": metadata
+            })
+
+        chunks.sort(
+            key=lambda chunk: chunk["metadata"].get(
+            "chunk_index", 0
+            )
+        )
+
+        return chunks
+
 
     def search(self, query, n_results=3):
 

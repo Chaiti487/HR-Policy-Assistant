@@ -190,37 +190,107 @@ async def ask_question(request: QuestionRequest):
     metadatas = results["metadatas"][0]
     distances = results["distances"][0]
 
+    print("Retrieved distances:", distances)
+
     RELEVANCE_THRESHOLD = 0.6
 
+    # No sufficiently relevant policy found
     if not distances or distances[0] > RELEVANCE_THRESHOLD:
         return {
-            "question" : request.question,
-            "answer":( 
-                "The HR policy does not provide this information."
+            "question": request.question,
+            "answer": (
+                "The HR policy does not provide this information. "
                 "Please contact HR."
             ),
-            "citations" : []
+            "citations": []
         }
 
-    context = "\n\n".join(documents)
+    # Combine retrieved policy chunks
+    overview_keywords = [
+        "main",
+        "overview",
+        "summary",
+        "summarize",
+        "what are the",
+        "different types",
+        "types of"
+    ]
 
+    is_overview = any(
+        keyword in request.question.lower()
+        for keyword in overview_keywords
+    )
+    context = "\n\n".join(documents)
+    if is_overview:
+        overview_chunks = vector_store.get_document_chunks(
+            metadatas[0]["document_name"]
+        )
+
+        documents = [
+            chunk["text"]
+            for chunk in overview_chunks
+        ]
+
+        metadatas = [
+            chunk["metadata"]
+            for chunk in overview_chunks
+        ]
+
+        context = "\n\n".join(documents)
+    print("\n===== CONTEXT SENT TO GEMINI =====")
+    print(context)
+    print("===== END CONTEXT =====\n")
+
+    # Generate grounded answer
     answer = generate_answer(
         question=request.question,
         context=context
     )
 
+    # Detect whether Gemini refused to answer
+    answer_lower = answer.lower()
+
+    refusal_phrases = [
+        "does not provide this information",
+        "does not contain information",
+        "does not contain any information",
+        "cannot answer",
+        "can't answer",
+        "unable to answer"
+    ]
+
+    is_refusal = any(
+        phrase in answer_lower
+        for phrase in refusal_phrases
+    )
+
     citations = []
-    if "does not provide this information" not in answer.lower():
-        if metadatas:
-            citations.append({
-                "document": metadatas[0]["document_name"],
-                "section": metadatas[0]["section"]
-            })
+
+    # Only return citations when Gemini actually answered
+    if not is_refusal and metadatas:
+
+        if is_overview:
+            for metadata in metadatas:
+                citation = {
+                    "document": metadata.get("document_name", ""),
+                    "section": metadata.get("section", "")
+                }
+
+                if citation not in citations:
+                    citations.append(citation)
+
+        else:
+            citation = {
+                "document": metadatas[0].get("document_name", ""),
+                "section": metadatas[0].get("section", "")
+            }
+
+            citations.append(citation)
 
     return {
         "question": request.question,
         "answer": answer,
-        "citations" : citations
+        "citations": citations
     }
 
 
