@@ -1,132 +1,9 @@
-# import os
-# import chromadb
-# from sentence_transformers import SentenceTransformer
-
-
-# CHROMA_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),"chroma_db")
-
-# COLLECTION_NAME = "hr_policies"
-
-
-# class VectorStore:
-
-#     def __init__(self):
-
-#         # Create/load the chromaDB database
-#         self.client = chromadb.PersistentClient(
-#             path=CHROMA_PATH
-#         )
-
-#         #Create/load our collection
-#         self.collection = self.client.get_or_create_collection(
-#             name = COLLECTION_NAME,
-#             metadata={
-#                 "hnsw:space": "cosine"
-#             }
-#         )
-
-#         # Load the embedding model
-#         print("Loading embedding model...")
-
-#         self.embedding_model = SentenceTransformer(
-#             "all-MiniLM-L6-v2"
-#         )
-
-#         print("Embedding model loaded!")
-
-#     def add_chunks(self, chunks):
-
-#         if not chunks:
-#             return
-
-#         documents = []
-#         embeddings = []
-#         metadatas = []
-#         ids = []
-
-#         for chunk in chunks:
-
-#             text = chunk["text"]
-
-#             # Convert text into embedding
-#             embedding = self.embedding_model.encode(
-#                 text,
-#                 normalize_embeddings= True
-#             ).tolist()
-
-#             documents.append(text)
-#             embeddings.append(embedding)
-#             metadatas.append(chunk["metadata"])
-#             ids.append(chunk["id"])
-
-#         # Store everything in ChromaDB
-#         self.collection.upsert(
-#             documents=documents,
-#             embeddings=embeddings,
-#             metadatas=metadatas,
-#             ids=ids
-#         )
-
-#     def delete_document(self, document_name):
-#         self.collection.delete(
-#             where={
-#                 "document_name": document_name
-#             }
-#         )
-
-#     def list_documents(self):
-#         data = self.collection.get(
-#             include=["metadatas"]
-#         )
-
-#         documents = set()
-
-#         for metadata in data["metadatas"]:
-#             if metadata and "document_name" in metadata:
-#                 documents.add(metadata["document_name"])
-
-#         return sorted(documents)
-
-#     def search(self, query, n_results=3):
-
-#         # Convert question into embedding
-#         query_embedding = self.embedding_model.encode(
-#             query,
-#             normalize_embeddings=True
-#         ).tolist()
-
-#         #Check whether database has data
-#         total_documents = self.collection.count()
-
-#         if total_documents == 0:
-
-#             return {
-#                 "documents": [[]],
-#                 "metadatas": [[]],
-#                 "distances": [[]]
-#             }
-
-#         n_results = min(
-#             n_results,
-#             total_documents
-#         )
-
-#         # Search ChromaDB
-#         return self.collection.query(
-#             query_embeddings=[query_embedding],
-#             n_results=n_results,
-#             include=[
-#                 "documents",
-#                 "metadatas",
-#                 "distances"
-#             ]
-#         )
-
 import os
-import chromadb
 from google import genai
 from google.genai import types
 from dotenv import load_dotenv
+from langchain_chroma import Chroma
+from langchain_core.embeddings import Embeddings
 
 load_dotenv()
 
@@ -137,6 +14,27 @@ CHROMA_PATH = os.path.join(
 
 COLLECTION_NAME = "hr_policies"
 EMBEDDING_MODEL = "gemini-embedding-001"
+
+class GeminiEmbeddings(Embeddings):
+
+    def __init__(self,client):
+        self.client = client
+
+    def embed_documents(self, texts):
+        response = self.client.models.embed_content(
+            model=EMBEDDING_MODEL,
+            contents=texts,
+            config=types.EmbedContentConfig(
+                output_dimensionality=768
+            )
+        )
+        return [
+            embedding.values
+            for embedding in response.embeddings
+        ]
+
+    def embed_query(self, text):
+        return self.embed_documents([text])[0]
 
 
 class VectorStore:
@@ -153,16 +51,16 @@ class VectorStore:
             api_key=api_key
         )
 
-        # ChromaDB
-        self.chroma_client = chromadb.PersistentClient(
-            path=CHROMA_PATH
+        # LangChain embedding wrapper
+        self.embedding_function = GeminiEmbeddings(
+            self.client
         )
 
-        self.collection = self.chroma_client.get_or_create_collection(
-            name=COLLECTION_NAME,
-            metadata={
-                "hnsw:space": "cosine"
-            }
+        # LangChain Chroma
+        self.vector_store = Chroma(
+            collection_name=COLLECTION_NAME,
+            embedding_function=self.embedding_function,
+            persist_directory=CHROMA_PATH
         )
 
         print("Gemini embedding service initialized!")
@@ -212,13 +110,8 @@ class VectorStore:
             f"Creating embeddings for {len(documents)} chunks..."
         )
 
-        embeddings = self.create_embeddings(
-            documents
-        )
-
-        self.collection.upsert(
-            documents=documents,
-            embeddings=embeddings,
+        self.vector_store.add_texts(
+            texts=documents,
             metadatas=metadatas,
             ids=ids
         )
@@ -230,7 +123,7 @@ class VectorStore:
 
     def delete_document(self, document_name):
 
-        self.collection.delete(
+        self.vector_store.delete(
             where={
                 "document_name": document_name
             }
@@ -239,7 +132,7 @@ class VectorStore:
 
     def list_documents(self):
 
-        data = self.collection.get(
+        data = self.vector_store.get(
             include=["metadatas"]
         )
 
@@ -258,13 +151,12 @@ class VectorStore:
 
     def search(self, query, n_results=3):
 
-        query_embedding = self.create_embeddings(
-            [query]
-        )[0]
+        results = self.vector_store.similarity_search_with_score(
+            query,
+            k=n_results
+        )
 
-        total_documents = self.collection.count()
-
-        if total_documents == 0:
+        if not results:
 
             return {
                 "documents": [[]],
@@ -272,19 +164,17 @@ class VectorStore:
                 "distances": [[]]
             }
 
-        n_results = min(
-            n_results,
-            total_documents
-        )
+        documents = []
+        metadatas = []
+        distances = []
 
-        return self.collection.query(
-            query_embeddings=[
-                query_embedding
-            ],
-            n_results=n_results,
-            include=[
-                "documents",
-                "metadatas",
-                "distances"
-            ]
-        )
+        for document, distance in results:
+            documents.append(document.page_content)
+            metadatas.append(document.metadata)
+            distances.append(distance)
+
+        return {
+            "documents": [documents],
+            "metadatas": [metadatas],
+            "distances": [distances]
+        }

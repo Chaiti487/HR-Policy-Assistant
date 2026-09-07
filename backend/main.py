@@ -120,55 +120,51 @@ def admin_login(username: str, password: str):
 
 @app.post("/admin/upload")
 async def upload_policies(
-    files: list[UploadFile] =File(...)
+    file: UploadFile = File(...)
 ):
-    uploaded_documents = []
-
-    for file in files:
-
-        if not file.filename:
-            continue
-
-        extension = os.path.splitext(file.filename)[1].lower()
-
-        if extension not in {".txt",".md"}:
-            raise HTTPException(
-                status_code=400,
-                detail=f"Unsupported file type: {file.filename}"
-            )
-
-        content = await file.read()
-
-        if not content:
-            continue
-
-        try:
-            text = content.decode("utf-8")
-        except UnicodeDecodeError:
-            raise HTTPException(
-                status_code=400,
-                detail=f"{file.filename} must be UTF-8 encoded"
-            )
-        chunks = create_chunks(
-            document_name=file.filename,
-            text=text
-        )
-
-        vector_store.add_chunks(chunks)
-
-        uploaded_documents.append({
-            "document" : file.filename,
-            "chunks" : len(chunks)
-        })
-
-    if not uploaded_documents:
+    if not file.filename:
         raise HTTPException(
             status_code=400,
-            detail="No valid policy files were uploaded."
+            detail="No file was uploaded."
         )
+
+    extension = os.path.splitext(
+        file.filename
+    )[1].lower()
+
+    if extension not in {".txt", ".md"}:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unsupported file type: {file.filename}"
+        )
+
+    content = await file.read()
+
+    if not content:
+        raise HTTPException(
+            status_code=400,
+            detail="The uploaded file is empty."
+        )
+
+    try:
+        text = content.decode("utf-8")
+    except UnicodeDecodeError:
+        raise HTTPException(
+            status_code=400,
+            detail=f"{file.filename} must be UTF-8 encoded"
+        )
+
+    chunks = create_chunks(
+        document_name=file.filename,
+        text=text
+    )
+
+    vector_store.add_chunks(chunks)
+
     return {
-        "message":"Policies uploaded and indexed successfully.",
-        "documents": uploaded_documents
+        "message": "Policy uploaded and indexed successfully.",
+        "document": file.filename,
+        "chunks": len(chunks)
     }
 
 @app.get("/admin/policies")

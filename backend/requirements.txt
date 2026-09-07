@@ -1,14 +1,9 @@
-# fastapi
-# uvicorn
-# python-multipart
-# python-dotenv
-# google-genai
-# chromadb
-# sentence-transformers
-
 fastapi
 uvicorn
 python-multipart
 python-dotenv
 google-genai
 chromadb
+langchain
+langchain-google-genai
+langchain-chroma

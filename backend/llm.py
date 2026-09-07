@@ -1,8 +1,8 @@
-
-from google import genai
-from dotenv import load_dotenv
 import os
 import time
+from dotenv import load_dotenv
+from langchain_google_genai import ChatGoogleGenerativeAI
+
 
 load_dotenv()
 
@@ -11,12 +11,11 @@ api_key = os.getenv("GEMINI_API_KEY")
 if not api_key:
     raise ValueError("GEMINI_API_KEY is not set.")
 
-client = genai.Client(api_key=api_key)
+
 
 
 MODELS = [
     "gemini-3.5-flash-lite",
-    "gemini-3.6-flash",
 ]
 
 
@@ -45,19 +44,28 @@ EMPLOYEE QUESTION:
     last_error = None
 
     for model in MODELS:
-        for attempt in range(3):
+        for attempt in range(2):
             try:
                 print(
                     f"Trying Gemini model: {model}, "
                     f"attempt: {attempt + 1}"
                 )
 
-                response = client.models.generate_content(
+                llm = ChatGoogleGenerativeAI(
                     model=model,
-                    contents=prompt
+                    google_api_key=api_key,
+                    temperature=0
                 )
 
-                return response.text
+                response = llm.invoke(prompt)
+                if isinstance(response.content, str):
+                    return response.content
+
+                return "".join(
+                    block.get("text", "")
+                    for block in response.content
+                    if isinstance(block, dict)
+                )
 
             except Exception as e:
                 last_error = e
@@ -66,24 +74,10 @@ EMPLOYEE QUESTION:
                     f"Gemini error with {model}: {e}"
                 )
 
-                # Retry temporary Gemini errors
-                if "503" in str(e) or "UNAVAILABLE" in str(e):
-                    if attempt < 2:
-                        wait_time = 10 * (attempt + 1)
-                        print(
-                            f"Gemini temporarily unavailable. "
-                            f"Retrying in {wait_time} seconds..."
-                        )
-                        time.sleep(wait_time)
-                    else:
-                        print(
-                            f"{model} failed after 3 attempts. "
-                            f"Trying next model..."
-                        )
-                else:
-                    break
+                if attempt == 0:
+                    time.sleep(5)
 
     raise RuntimeError(
-        "Gemini service is temporarily unavailable. "
+        f"Gemini service is temporarily unavailable. "
         f"Last error: {last_error}"
     )
