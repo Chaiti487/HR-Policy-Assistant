@@ -1,608 +1,497 @@
-````markdown
-# System Design
+# HR Policy Assistant — Design Document
 
-## 1. Problem
+## 1. Overview
 
-The goal is to build an HR Policy Assistant that can answer employee questions using company HR policy documents.
+The HR Policy Assistant is a Retrieval-Augmented Generation (RAG) application that allows employees to ask questions about company HR policies.
 
-The system must avoid generating unsupported policy information.
+The system retrieves relevant information from uploaded HR policy documents and uses Gemini to generate an answer grounded only in the retrieved policy content.
 
-## 2. RAG Approach
+The application also provides citations showing the document and section used to answer the question.
 
-The application uses Retrieval-Augmented Generation (RAG).
+If the available policy information does not contain an answer, the system safely refuses to answer and asks the employee to contact HR.
 
-Instead of sending the entire policy collection directly to the LLM, the system first retrieves relevant policy sections. These sections are then provided to Gemini as context.
+---
 
-### RAG Flow
-
-```text
-┌─────────────────────────┐
-│     Admin Uploads       │
-│     HR Policy Documents │
-└────────────┬────────────┘
-             ↓
-┌─────────────────────────┐
-│    File Validation      │
-│    & Text Extraction    │
-└────────────┬────────────┘
-             ↓
-┌─────────────────────────┐
-│    Section Detection    │
-│       & Chunking        │
-│   100 words / 20 overlap│
-└────────────┬────────────┘
-             ↓
-┌─────────────────────────┐
-│       Embeddings        │
-│  gemini-embedding-001   │
-└────────────┬────────────┘
-             ↓
-┌─────────────────────────┐
-│       ChromaDB          │
-│ Text + Embeddings +     │
-│       Metadata          │
-└────────────┬────────────┘
-             │
-             │ Employee Question
-             ↓
-┌─────────────────────────┐
-│   Question Embedding    │
-└────────────┬────────────┘
-             ↓
-┌─────────────────────────┐
-│    Similarity Search    │
-│       Top 3 Chunks      │
-└────────────┬────────────┘
-             ↓
-┌─────────────────────────┐
-│   Relevance Threshold   │
-│         Check           │
-└───────┬─────────┬───────┘
-        │         │
-   Relevant   Not Relevant
-        │         │
-        ↓         ↓
-┌──────────────┐  ┌──────────────────────┐
-│    Gemini    │  │     Safe Refusal     │
-│   Generate   │  │  "Policy does not   │
-│    Answer    │  │   provide this..."   │
-└──────┬───────┘  └──────────────────────┘
-       ↓
-┌─────────────────────────┐
-│   Answer + Citations    │
-│    Document + Section   │
-└─────────────────────────┘
-````
-
-## 3. High-Level Design (HLD)
-
-### 3.1 System Architecture
-
-The system consists of the following major components:
-
-1. **Employee Portal**
-
-   * Provides the interface for employees to ask HR policy questions.
-   * Displays generated answers and policy citations.
-
-2. **Admin Portal**
-
-   * Allows administrators to log in.
-   * Allows uploading multiple policy documents.
-   * Displays indexed policy documents.
-   * Allows administrators to delete policy documents.
-
-3. **FastAPI Backend**
-
-   * Provides REST APIs.
-   * Handles document processing and question answering.
-   * Connects the frontend with the RAG pipeline.
-
-4. **Document Processing Layer**
-
-   * Validates uploaded files.
-   * Extracts text.
-   * Detects policy sections.
-   * Creates chunks.
-
-5. **Embedding Model**
-
-   * Uses **`gemini-embedding-001`**.
-   * Converts policy chunks and questions into embeddings.
-
-6. **ChromaDB**
-
-   * Stores embeddings, policy text, and metadata.
-   * Performs similarity search.
-
-7. **Gemini**
-
-   * Generates the final answer using retrieved policy context.
-
-### 3.2 HLD Architecture
+## 2. High-Level Architecture
 
 ```text
                     ┌─────────────────────┐
-                    │    Employee Portal  │
+                    │   Employee / Admin  │
+                    │      Frontend       │
                     └──────────┬──────────┘
                                │
-                               │ Question
-                               ↓
+                               ▼
                     ┌─────────────────────┐
-                    │    FastAPI Backend  │
-                    └──────────┬──────────┘
-                               │
-                               ↓
-                    ┌─────────────────────┐
-                    │    RAG Pipeline     │
+                    │      FastAPI        │
+                    │      Backend        │
                     └──────────┬──────────┘
                                │
                  ┌─────────────┴─────────────┐
-                 ↓                           ↓
+                 │                           │
+                 ▼                           ▼
         ┌─────────────────┐         ┌─────────────────┐
-        │     Gemini      │────────→│    ChromaDB     │
-        │    Embedding    │         │  Vector Storage │
-        └─────────────────┘         └────────┬────────┘
-                                             │
-                                             │ Relevant Chunks
-                                             ↓
-                                      ┌─────────────────┐
-                                      │      Gemini     │
-                                      │       LLM       │
-                                      └────────┬────────┘
-                                               │
-                                               ↓
-                                      ┌─────────────────┐
-                                      │ Answer + Source │
-                                      │    Citations    │
-                                      └─────────────────┘
-
-
+        │ Document Upload │         │  Ask Question   │
+        └────────┬────────┘         └────────┬────────┘
+                 │                           │
+                 ▼                           ▼
+        ┌─────────────────┐         ┌─────────────────┐
+        │ Parse & Chunk   │         │ Gemini Query    │
+        │ Documents       │         │ Embedding      │
+        └────────┬────────┘         └────────┬────────┘
+                 │                           │
+                 ▼                           ▼
+        ┌─────────────────────────────────────────────┐
+        │              ChromaDB                       │
+        │         Vector Store / Search               │
+        └──────────────────────┬──────────────────────┘
+                               │
+                               ▼
                     ┌─────────────────────┐
-                    │     Admin Portal    │
+                    │ Relevant Policy     │
+                    │ Chunks + Metadata   │
                     └──────────┬──────────┘
                                │
-                               │ Upload
-                               ↓
+                               ▼
                     ┌─────────────────────┐
-                    │    FastAPI Backend  │
+                    │ LangChain + Gemini  │
+                    │     LLM             │
                     └──────────┬──────────┘
-                               ↓
+                               │
+                               ▼
                     ┌─────────────────────┐
-                    │ Document Processing │
-                    └──────────┬──────────┘
-                               ↓
-                    ┌─────────────────────┐
-                    │      ChromaDB       │
+                    │ Answer + Citations  │
                     └─────────────────────┘
 ```
 
-### 3.3 Data Flow
+---
 
-There are two main flows.
+## 3. Technology Stack
 
-#### Document Ingestion Flow
+### Backend
 
-```text
-Admin
-  ↓
-Upload Policy
-  ↓
-File Validation
-  ↓
-Text Extraction
-  ↓
-Section Detection
-  ↓
-Chunking
-  ↓
-Embedding Generation
-  ↓
-ChromaDB
+* Python
+* FastAPI
+* Uvicorn
+
+### RAG / AI
+
+* LangChain
+* Gemini
+* Gemini Embeddings
+* ChromaDB
+
+### Document Processing
+
+* Markdown policy documents
+* Text chunking
+* Metadata extraction
+
+### Frontend
+
+* HTML
+* CSS
+* JavaScript
+
+### Deployment
+
+* Render for backend
+* Vercel for frontend
+
+---
+
+## 4. RAG Pipeline
+
+The application follows a Retrieval-Augmented Generation architecture.
+
+### Step 1 — Document Upload
+
+An administrator uploads an HR policy document.
+
+The backend:
+
+1. Receives the document.
+2. Saves the uploaded file.
+3. Extracts its text.
+4. Splits the document into smaller chunks.
+5. Adds metadata to each chunk.
+6. Generates embeddings for the chunks.
+7. Stores the embeddings and metadata in ChromaDB.
+
+---
+
+### Step 2 — Text Chunking
+
+Documents are divided into smaller chunks instead of storing the complete document as a single vector.
+
+Each chunk contains metadata such as:
+
+```json
+{
+  "document_name": "leave-policy.md",
+  "section": "2.1 Casual leave (CL)",
+  "chunk_index": 2
+}
 ```
 
-#### Question Answering Flow
+This allows the system to identify the exact document and policy section used during retrieval.
+
+---
+
+### Step 3 — Embedding Generation
+
+The system uses Gemini Embeddings to convert policy chunks into numerical vector representations.
+
+The same embedding model is used for employee questions.
+
+This allows the system to compare the semantic similarity between the question and policy chunks.
+
+The current embedding model is:
 
 ```text
-Employee Question
-  ↓
-Question Embedding
-  ↓
-ChromaDB Similarity Search
-  ↓
-Top 3 Relevant Chunks
-  ↓
-Relevance Threshold
-  ↓
+gemini-embedding-001
+```
+
+The embeddings are stored in ChromaDB.
+
+---
+
+## 5. Semantic Retrieval
+
+When an employee asks a question, the question is converted into an embedding.
+
+The application searches ChromaDB for the most semantically similar policy chunks.
+
+The current retrieval configuration returns the top two relevant chunks for a normal question.
+
+A relevance threshold is also applied.
+
+If the retrieved result is not sufficiently relevant, the system does not send unrelated policy information to the LLM.
+
+Instead, it returns:
+
+```text
+The HR policy does not provide this information. Please contact HR.
+```
+
+This reduces the risk of hallucinated answers.
+
+---
+
+## 6. LangChain Integration
+
+LangChain is used to provide the LLM orchestration layer.
+
+The application uses:
+
+```text
+LangChain
+    ↓
+ChatGoogleGenerativeAI
+    ↓
 Gemini
-  ↓
-Answer
-  ↓
-Backend-generated Citations
-  ↓
-Employee Portal
 ```
 
-## 4. Low-Level Design (LLD)
+The Gemini chat model is used to generate the final grounded answer.
 
-### 4.1 Backend Modules
+The application sends the employee's question together with the retrieved policy context to the LLM.
 
-The backend is divided into small modules with separate responsibilities.
+The LLM is instructed to:
+
+* Use only the provided policy context.
+* Not use outside knowledge.
+* Answer factual questions only when the context contains the required information.
+* Summarize relevant information for overview questions.
+* Refuse when the policy does not contain the required information.
+
+The vector database and Gemini embeddings are integrated separately through the application's vector-store layer, while LangChain handles the LLM interaction.
+
+---
+
+## 7. Grounding and Hallucination Control
+
+The system uses multiple layers of protection against hallucination.
+
+### Retrieval threshold
+
+The similarity score is checked before generating an answer.
+
+If the retrieved content is not sufficiently relevant, the request is refused.
+
+### Restricted LLM context
+
+The LLM receives only the retrieved HR policy content.
+
+The prompt explicitly instructs Gemini not to use external knowledge.
+
+### Safe refusal
+
+If the policy does not contain the requested information, the system responds:
 
 ```text
-backend/
-│
-├── main.py
-├── ingestion.py
-├── chunking.py
-├── vector_store.py
-├── llm.py
-├── ask.py
-└── requirements.txt
+The HR policy does not provide this information. Please contact HR.
 ```
 
-### 4.2 `main.py`
+No unsupported information is generated.
 
-`main.py` is the main FastAPI application.
+---
 
-Responsibilities:
+## 8. Overview Questions
 
-* Create the FastAPI application
-* Configure CORS
-* Initialize the vector store
-* Load default policies
-* Provide API endpoints
-* Handle admin operations
-* Handle employee questions
+The system distinguishes between normal factual questions and overview questions.
 
-Main endpoints:
+Examples of overview questions:
 
 ```text
-POST   /admin/login
-POST   /admin/upload
-GET    /admin/policies
-DELETE /admin/policies/{document_name}
-POST   /ask
-GET    /health
+What are the main types of leave available?
+What are the main IT security policies?
+What are the different data classifications?
 ```
 
-### 4.3 `ingestion.py`
+For these questions, retrieving only the top few chunks may not provide enough information.
 
-Responsible for validating and processing uploaded policy files.
+Therefore, when an overview question is detected, the system retrieves all chunks belonging to the relevant document and provides them as context to Gemini.
 
-Main responsibilities:
+This allows Gemini to create a more complete summary while remaining grounded in the policy.
 
-* Validate file name
-* Validate file extension
-* Read uploaded file
-* Decode UTF-8 text
-* Check for empty files
-* Prepare policy content for indexing
+---
 
-Currently supported formats:
+## 9. Citation Design
+
+The system returns citations separately from the generated answer.
+
+Example:
+
+```json
+{
+  "question": "What is the minimum password length?",
+  "answer": "The minimum password length is 12 characters.",
+  "citations": [
+    {
+      "document": "it-security-policy.md",
+      "section": "2. Accounts and passwords"
+    }
+  ]
+}
+```
+
+For normal factual questions, the most relevant retrieved policy section is returned.
+
+For overview questions, multiple relevant sections can be returned.
+
+Citations are generated from the metadata stored with the retrieved chunks rather than being invented by the LLM.
+
+---
+
+## 10. API Response Structure
+
+The `/ask` endpoint returns:
+
+```json
+{
+  "question": "employee question",
+  "answer": "grounded answer",
+  "citations": [
+    {
+      "document": "policy document name",
+      "section": "policy section"
+    }
+  ]
+}
+```
+
+For an unsupported question:
+
+```json
+{
+  "question": "Can I get a salary advance?",
+  "answer": "The HR policy does not provide this information. Please contact HR.",
+  "citations": []
+}
+```
+
+---
+
+## 11. Document Management
+
+The backend maintains the document and vector-store relationship using document metadata.
+
+Each stored chunk contains the document name.
+
+This allows the system to:
+
+* List uploaded documents.
+* Delete all chunks belonging to a document.
+* Retrieve all chunks belonging to a document.
+* Generate citations using document and section metadata.
+
+---
+
+## 12. Why ChromaDB?
+
+ChromaDB is used as the vector database because:
+
+* It is lightweight.
+* It is easy to run locally.
+* It works well for a small HR policy knowledge base.
+* It supports semantic similarity search.
+* It stores metadata alongside vectors.
+* It integrates easily with LangChain.
+
+For the scale of this assignment, a local vector database is sufficient.
+
+---
+
+## 13. Why Gemini?
+
+Gemini is used for both:
+
+* Embedding generation
+* Answer generation
+
+This keeps the AI stack relatively simple.
+
+The embedding model converts policy text and queries into vectors, while the Gemini chat model generates grounded responses.
+
+---
+
+## 14. Failure Handling
+
+The system handles several failure cases.
+
+### No relevant policy
+
+The system refuses to answer.
+
+### LLM refusal
+
+If Gemini determines that the supplied context does not contain the required information, the API returns the refusal response and does not provide citations.
+
+### Empty document
+
+Documents that produce no usable chunks are not indexed.
+
+### Missing API key
+
+The backend checks for the required Gemini API key during initialization.
+
+The API key is stored in an environment variable and is not committed to Git.
+
+---
+
+## 15. Security Considerations
+
+The Gemini API key is stored in:
 
 ```text
-.txt
-.md
+.env
 ```
 
-### 4.4 `chunking.py`
+The `.env` file is excluded from Git using `.gitignore`.
 
-Responsible for converting policy text into searchable chunks.
+Generated ChromaDB data and uploaded documents are also excluded from the Git repository.
 
-Main functions:
+The application should not expose the Gemini API key to the frontend.
+
+The current admin authentication is intentionally simple because this project is an assignment prototype. A production system should use proper authentication, authorization, password hashing, session/token management, and audit logging.
+
+---
+
+## 16. Design Decisions and Trade-offs
+
+### Top-k retrieval
+
+The system currently retrieves two chunks for normal questions.
+
+This keeps the context small and reduces unnecessary information being passed to the LLM.
+
+### Overview retrieval
+
+Overview questions use all chunks from the relevant document because a summary may require information from multiple sections.
+
+### Relevance threshold
+
+A similarity threshold is used to prevent unrelated policy chunks from being treated as evidence.
+
+### Metadata-based citations
+
+Citations are generated from retrieved metadata rather than generated by the LLM.
+
+This makes the citations more reliable and explainable.
+
+### LangChain
+
+LangChain is used for LLM integration and orchestration while the application retains control over document processing, retrieval logic, relevance checking, and citation generation.
+
+This provides a balance between using a standard RAG/LLM framework and keeping the application's behavior understandable.
+
+---
+
+## 17. Example End-to-End Flow
+
+Employee asks:
 
 ```text
-split_into_sections()
-split_into_chunks()
-create_chunks()
+How many casual leave days can be carried forward?
 ```
 
-The process is:
-
-```text
-Policy Text
-    ↓
-Markdown Heading Detection
-    ↓
-Policy Sections
-    ↓
-100 Word Chunks
-    ↓
-20 Word Overlap
-    ↓
-Chunk Metadata
-```
-
-Each chunk contains:
-
-```text
-id
-text
-document_name
-section
-chunk_index
-```
-
-### 4.5 `vector_store.py`
-
-Responsible for embedding generation and ChromaDB operations.
-
-Main responsibilities:
-
-* Initialize ChromaDB
-* Initialize Gemini embedding service
-* Generate embeddings
-* Store policy chunks
-* Search similar chunks
-* List indexed documents
-* Delete policy documents
-
-The vector store uses cosine distance.
-
-```text
-Policy Chunk
-     ↓
-Gemini Embedding Model
-     ↓
-Embedding Vector
-     ↓
-ChromaDB
-```
-
-For a question:
+The flow is:
 
 ```text
 Question
    ↓
 Gemini Embedding
    ↓
-ChromaDB Search
-   ↓
-Top 3 Results
-```
-
-### 4.6 `llm.py`
-
-Responsible for communication with Gemini.
-
-The module:
-
-1. Receives the employee question.
-2. Receives retrieved policy context.
-3. Creates a grounded prompt.
-4. Sends the prompt to Gemini.
-5. Returns the generated answer.
-
-Gemini is instructed to use only the retrieved policy context.
-
-### 4.7 `ask.py`
-
-Contains the request model used for employee questions.
-
-The employee question is received as:
-
-```json
-{
-  "question": "What is the minimum password length?"
-}
-```
-
-The request is then passed to the retrieval and generation pipeline.
-
-### 4.8 Retrieval Logic
-
-The retrieval process is:
-
-```text
-Employee Question
-       ↓
-Generate Question Embedding
-       ↓
 ChromaDB Similarity Search
-       ↓
-Retrieve Top 3 Chunks
-       ↓
-Check Similarity Distance
-       ↓
-Is Result Relevant?
-      / \
-    Yes  No
-     ↓    ↓
-  Gemini  Safe Refusal
-```
-
-A relevance threshold is used to reject clearly unrelated questions.
-
-### 4.9 Citation Generation
-
-Citations are generated by the backend rather than Gemini.
-
-The retrieved metadata contains:
-
-```text
-document_name
-section
-chunk_index
-```
-
-The backend uses the document name and section to create the citation.
-
-Example:
-
-```json
-{
-  "document": "it-security-policy.md",
-  "section": "2. Accounts and passwords"
-}
-```
-
-This prevents the LLM from creating false citations.
-
-## 5. Data Model
-
-Each indexed chunk is logically represented as:
-
-```text
-Chunk
-├── id
-├── text
-└── metadata
-    ├── document_name
-    ├── section
-    └── chunk_index
-```
-
-ChromaDB stores the chunk text, embedding vector, and metadata.
-
-## 6. API Design
-
-### POST /admin/login
-
-Used for administrator authentication.
-
-### POST /admin/upload
-
-Used to upload and index one or more policy documents.
-
-### GET /admin/policies
-
-Returns the list of currently indexed policy documents.
-
-### DELETE /admin/policies/{document_name}
-
-Removes all chunks belonging to the specified policy document.
-
-### POST /ask
-
-Accepts an employee question and returns:
-
-```json
-{
-  "question": "...",
-  "answer": "...",
-  "citations": []
-}
-```
-
-### GET /health
-
-Returns:
-
-```json
-{
-  "status": "healthy"
-}
-```
-
-## 7. Error Handling
-
-The system handles common errors such as:
-
-* Empty questions
-* Empty uploaded files
-* Unsupported file formats
-* Invalid UTF-8 files
-* Invalid admin credentials
-* Missing policy documents
-* No relevant policy information
-* Temporary Gemini service failures
-
-When relevant policy information cannot be found, the system uses the safe refusal response instead of generating an unsupported answer.
-
-## 8. Security Considerations
-
-The current implementation includes basic administrator login functionality.
-
-The Gemini API key is stored in an environment variable:
-
-```text
-GEMINI_API_KEY
-```
-
-The `.env` file is excluded from Git using `.gitignore`.
-
-The API key must never be committed to the GitHub repository.
-
-For production, stronger authentication and authorization should be implemented.
-
-## 9. Design Trade-offs
-
-### Gemini Embeddings
-
-Advantages:
-
-* Avoids running a local embedding model
-* Reduces local memory requirements
-* Suitable for the small HR policy collection
-* Simplifies deployment on resource-limited environments
-
-### ChromaDB
-
-Advantages:
-
-* Simple setup
-* Persistent local storage
-* Suitable for a small-to-medium document collection
-* Easy semantic similarity search
-
-### Gemini
-
-Advantages:
-
-* Strong natural language generation
-* Simple API integration
-* Suitable for generating concise policy answers
-
-### Simple Chunking
-
-The current 100-word chunk size and 20-word overlap provide a simple approach suitable for the small policy documents used in this assignment.
-
-For larger documents, more advanced chunking strategies could provide better retrieval quality.
-
-## 10. Future Improvements
-
-Possible future improvements include:
-
-* PDF and DOCX support
-* Stronger administrator authentication
-* Role-based access control
-* Policy versioning
-* Better chunking for large documents
-* Hybrid keyword + semantic search
-* Reranking
-* Automated evaluation
-* Audit logging
-* Production deployment with HTTPS
-
-## 11. Summary
-
-The system follows a simple and explainable architecture:
-
-```text
-Admin Upload
-     ↓
-Process & Chunk
-     ↓
-Generate Embeddings
-     ↓
-Store in ChromaDB
-     ↓
-Employee Question
-     ↓
-Semantic Retrieval
-     ↓
+   ↓
+Relevant Leave Policy Chunk
+   ↓
 Relevance Check
-     ↓
+   ↓
+LangChain
+   ↓
 Gemini
-     ↓
+   ↓
 Grounded Answer
-     ↓
-Backend-generated Citation
+   ↓
+Metadata-based Citation
+   ↓
+JSON Response
 ```
 
-The main design principle is:
+Result:
 
-> Retrieve first → Ground the answer → Generate the response → Cite the source
-
+```json
+{
+  "question": "How many casual leave days can be carried forward?",
+  "answer": "A maximum of 8 days of unused casual leave may be carried forward to the next calendar year.",
+  "citations": [
+    {
+      "document": "leave-policy.md",
+      "section": "4.1 Casual leave carry-forward"
+    }
+  ]
+}
 ```
+
+---
+
+## 18. Future Improvements
+
+For a production-ready version, the following improvements could be added:
+
+* Proper admin authentication and role-based access control.
+* PDF/DOCX document parsing.
+* Better chunking strategies based on headings and semantic boundaries.
+* Hybrid keyword + semantic retrieval.
+* Reranking of retrieved chunks.
+* More robust evaluation of retrieval quality.
+* Persistent cloud vector database.
+* Document versioning.
+* Audit logs.
+* Rate limiting.
+* Automated tests.
+* More detailed citation references, such as page numbers.
+* Streaming responses.
+* Monitoring and observability.
+
+
