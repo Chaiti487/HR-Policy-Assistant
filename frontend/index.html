@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>HR Policy Assistant</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="page">
+
+        <!-- Header -->
+        <header class="topbar">
+            <div class="brand">
+                <div class="brand-icon">HR</div>
+
+                <div>
+                    <h1>Company HR Portal</h1>
+                    <span>Policy Assistant</span>
+                </div>
+            </div>
+
+            <div class="portal-label">
+                Employee Portal
+            </div>
+        </header>
+
+
+        <!-- Main -->
+        <main>
+
+            <!-- Hero -->
+            <section class="hero">
+                <div class="hero-badge">
+                    <span class="status-dot"></span>
+                    HR Policy Assistant
+                </div>
+
+                <h2>How can we help you today?</h2>
+
+                <p>
+                    Ask questions about company HR policies and get
+                    answers directly from the available policy documents.
+                </p>
+            </section>
+
+
+            <!-- Question Card -->
+            <section class="question-card">
+
+                <div class="section-label">
+                    <span>ASK A QUESTION</span>
+                </div>
+
+                <textarea
+                    id="question"
+                    placeholder="Example: How many casual leave days can I carry forward?"
+                ></textarea>
+
+                <div class="question-footer">
+                    <span class="helper-text">
+                        Answers are generated only from company policy documents.
+                    </span>
+
+                    <button onclick="askQuestion()" id="askButton">
+                        Ask Assistant
+                        <span class="arrow">→</span>
+                    </button>
+                </div>
+
+            </section>
+
+
+            <!-- Answer -->
+            <section
+                class="answer-card"
+                id="answerSection"
+                style="display: none;"
+            >
+
+                <div class="section-heading">
+                    <div>
+                        <span class="section-label">ASSISTANT RESPONSE</span>
+                        <h3>Answer</h3>
+                    </div>
+                </div>
+
+                <div class="answer-box">
+                    <p id="answer"></p>
+                </div>
+
+
+                <!-- Citations -->
+                <div class="sources">
+
+                    <div class="sources-heading">
+                        <span class="section-label">POLICY SOURCE</span>
+                    </div>
+
+                    <div id="citations"></div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+
+        <!-- Footer -->
+        <footer>
+
+            <div>
+                <span>Company HR Portal</span>
+                <span class="footer-separator">•</span>
+                <span>AI Policy Assistant</span>
+            </div>
+
+            <a href="admin.html">
+                Admin Portal →
+            </a>
+
+        </footer>
+
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
