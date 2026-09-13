@@ -20,6 +20,7 @@ Employees can:
 * Receive answers based only on available policy documents
 * View the document and section used as the source
 * Ask overview or summary questions
+* View a demo video explaining the application workflow
 * Receive a safe refusal when the requested information is not available
 
 ### Admin Portal
@@ -115,7 +116,7 @@ For example:
 
 > What are the main IT security policies?
 
-For these questions, retrieving only two chunks may not provide enough information.
+For normal factual questions, the system retrieves the top 2 relevant chunks. However, overview questions may require information from multiple sections.
 
 Therefore, the system identifies overview-style questions and retrieves **all chunks from the relevant policy document**.
 
@@ -167,6 +168,18 @@ Example:
 ```
 
 Citations are not returned when the system refuses to answer.
+
+### 7. Demo Video
+
+The Employee Portal includes a demo video that demonstrates the main application workflow, including:
+
+* Asking HR policy questions
+* Receiving grounded answers
+* Viewing policy source citations
+* Handling unsupported questions
+* Using the Admin Portal to upload policy documents
+
+The demo video is provided through YouTube and can be accessed directly from the Employee Portal.
 
 ---
 

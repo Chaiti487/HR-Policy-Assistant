@@ -250,21 +250,21 @@ function askDemoQuestion(question) {
 // ================================
 
 function openDemoVideo() {
-  const modal = document.getElementById("demoModal");
-  const video = document.getElementById("demoVideo");
+    const modal = document.getElementById("demoModal");
+    const video = document.getElementById("demoVideo");
 
-  video.src = "https://www.youtube.com/embed/S7kJiA9oaBw?autoplay=1";
+    video.src = "https://www.youtube.com/embed/Lh5hTp1uBnY?autoplay=1";
 
-  modal.classList.add("active");
-  document.body.style.overflow = "hidden";
+    modal.classList.add("active");
+    document.body.style.overflow = "hidden";
 }
 
 function closeDemoVideo() {
-  const modal = document.getElementById("demoModal");
-  const video = document.getElementById("demoVideo");
+    const modal = document.getElementById("demoModal");
+    const video = document.getElementById("demoVideo");
 
-  video.src = "";
+    video.src = "";
 
-  modal.classList.remove("active");
-  document.body.style.overflow = "";
+    modal.classList.remove("active");
+    document.body.style.overflow = "";
 }
