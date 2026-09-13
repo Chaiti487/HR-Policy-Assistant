@@ -181,6 +181,27 @@ async def get_policies():
 @app.post("/ask")
 async def ask_question(request: QuestionRequest):
 
+    overview_keywords = [
+        "main",
+        "overview",
+        "summary",
+        "summarize",
+        "explain the",
+        "explain",
+        "whole",
+        "entire",
+        "complete",
+        "all",
+        "what are the",
+        "different types",
+        "types of"
+    ]
+
+    is_overview = any(
+        keyword in request.question.lower()
+        for keyword in overview_keywords
+    )
+
     results = vector_store.search(
         request.question,
         n_results=2
@@ -205,21 +226,7 @@ async def ask_question(request: QuestionRequest):
             "citations": []
         }
 
-    # Combine retrieved policy chunks
-    overview_keywords = [
-        "main",
-        "overview",
-        "summary",
-        "summarize",
-        "what are the",
-        "different types",
-        "types of"
-    ]
-
-    is_overview = any(
-        keyword in request.question.lower()
-        for keyword in overview_keywords
-    )
+    
     context = "\n\n".join(documents)
     if is_overview:
         overview_chunks = vector_store.get_document_chunks(
