@@ -104,6 +104,7 @@ function askSuggestedQuestion(question) {
 // ==========================================
 
 async function askQuestion() {
+  const askButton = document.getElementById("askButton");
   const questionInput = document.getElementById("question");
 
   const answerSection = document.getElementById("answerSection");
@@ -131,6 +132,11 @@ async function askQuestion() {
   answerElement.textContent = "Searching the HR policies...";
 
   citationsElement.innerHTML = "";
+  askButton.disabled = true;
+  askButton.innerHTML = `
+    <span class="loading-spinner"></span>
+    Searching...
+`;
 
   try {
     const response = await fetch(`${API_URL}/ask`, {
@@ -222,6 +228,12 @@ async function askQuestion() {
     answerElement.textContent = `Error: ${error.message}`;
 
     citationsElement.innerHTML = "";
+  } finally {
+    askButton.disabled = false;
+    askButton.innerHTML = `
+        Ask Assistant
+        <span class="arrow">→</span>
+    `;
   }
 }
 
