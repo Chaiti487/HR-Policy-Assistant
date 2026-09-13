@@ -43,9 +43,7 @@
 
           <h2>How can I help you?</h2>
 
-          <p>
-    Get clear answers from your company’s HR policies.
-</p>
+          <p>Get clear answers from your company’s HR policies.</p>
 
           <div class="demo-questions">
             <div class="demo-title">Try asking</div>
@@ -133,7 +131,12 @@
 
           <div class="suggested-list" id="suggestedList"></div>
         </section>
+        <div class="demo-video-link">
+        <button onclick="openDemoVideo()">View demo video →</button>
+      </div>
       </main>
+
+      
 
       <!-- Footer -->
       <footer>
@@ -146,6 +149,30 @@
         <a href="admin.html"> Admin Portal → </a>
       </footer>
     </div>
+
+        <!-- Demo Video Modal -->
+    <div class="demo-modal" id="demoModal">
+      <div class="demo-modal-overlay" onclick="closeDemoVideo()"></div>
+
+      <div class="demo-modal-content">
+        <button class="demo-modal-close" onclick="closeDemoVideo()">
+          ×
+        </button>
+
+        <div class="demo-video-wrapper">
+          <iframe
+            id="demoVideo"
+            src=""
+            title="HR Policy Assistant Demo"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+        </div>
+      </div>
+    </div>
+
+    
 
     <script src="script.js"></script>
   </body>
