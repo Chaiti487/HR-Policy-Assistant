@@ -2152,3 +2152,1221 @@ footer a:hover {
     }
 
 }
+
+.demo-credentials {
+    margin-top: 7px;
+    font-size: 11px;
+    color: #555;
+    opacity: 0.7;
+    text-align: center;
+}
+
+.demo-credentials strong {
+    font-weight: 600;
+    color: #333;
+}
+
+
+.demo-questions {
+    width: 100%;
+    max-width: 520px;
+    margin: 24px auto 0;
+}
+
+.demo-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #7a8490;
+    margin-bottom: 10px;
+    text-align: left;
+}
+
+.demo-question {
+    display: block;
+    width: 100%;
+    margin-bottom: 8px;
+    padding: 11px 14px;
+
+    background: #ffffff;
+    border: 1px solid #e1e5ea;
+    border-radius: 9px;
+
+    color: #333;
+    font-size: 12px;
+    line-height: 1.4;
+
+    text-align: left;
+    cursor: pointer;
+
+    transition: background 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.demo-question:hover {
+    background: #f8fafc;
+    border-color: #cbd3dc;
+}
+
+/* ==========================================
+   EMPLOYEE HOME
+========================================== */
+
+.employee-home {
+    width: 100%;
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 48px 0 42px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ==========================================
+   EMPLOYEE HERO
+========================================== */
+
+.employee-home .hero {
+    text-align: center;
+    margin-bottom: 26px;
+}
+
+.employee-home .hero h2 {
+    margin-top: 16px;
+    font-size: 34px;
+    line-height: 1.2;
+    letter-spacing: -0.8px;
+}
+
+.employee-home .hero p {
+    margin-top: 9px;
+}
+
+/* ==========================================
+   TRY ASKING
+========================================== */
+
+.demo-questions {
+    width: 100%;
+    max-width: 720px;
+    margin: 24px auto 0;
+}
+
+.demo-title {
+    margin-bottom: 10px;
+    color: #7a8490;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.9px;
+    text-transform: uppercase;
+    text-align: left;
+}
+
+.demo-questions {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.demo-title {
+    grid-column: 1 / -1;
+}
+
+.demo-question {
+    min-height: 64px;
+    padding: 12px 14px;
+
+    background: #ffffff;
+    border: 1px solid #e1e6ec;
+    border-radius: 10px;
+
+    color: #354052;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.45;
+
+    text-align: left;
+    cursor: pointer;
+
+    box-shadow: 0 2px 8px rgba(23, 32, 51, 0.03);
+
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+.demo-question:hover {
+    background: #fbfcfe;
+    border-color: #c9d3df;
+    box-shadow: 0 5px 14px rgba(23, 32, 51, 0.06);
+    transform: translateY(-1px);
+}
+
+/* ==========================================
+   QUESTION CARD
+========================================== */
+
+/* ==========================================
+   EMPLOYEE QUESTION BOX - COMPACT
+========================================== */
+
+.employee-home .question-card {
+    margin-top: 18px;
+    padding: 16px 18px 14px;
+    border-radius: 12px;
+}
+
+.employee-home .question-card textarea {
+    width: 100%;
+    min-height: 64px;
+    height: 64px;
+    max-height: 100px;
+
+    margin-top: 8px;
+    padding: 11px 13px;
+
+    font-size: 13px;
+    line-height: 1.5;
+
+    resize: vertical;
+}
+
+.employee-home .question-footer {
+    margin-top: 8px;
+    min-height: 34px;
+}
+
+.employee-home .helper-text {
+    font-size: 10px;
+}
+
+.employee-home #askButton {
+    padding: 9px 15px;
+    font-size: 12px;
+}
+
+
+/* Keep the homepage sections visually connected */
+
+.employee-home {
+    padding-top: 38px;
+    padding-bottom: 28px;
+}
+
+.employee-home .hero {
+    margin-bottom: 0;
+}
+
+.employee-home .demo-questions {
+    margin-bottom: 0;
+}
+
+.employee-home .question-card {
+    margin-top: 22px;
+}
+/* ==========================================
+   ANSWER CARD
+========================================== */
+
+.employee-home .answer-card {
+    margin-top: 18px;
+    padding: 22px;
+}
+
+/* ==========================================
+   SUGGESTED QUESTIONS
+========================================== */
+
+.suggested-questions {
+    margin-top: 14px;
+    padding: 0 2px;
+}
+
+.suggested-title {
+    margin-bottom: 9px;
+    color: #667080;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.suggested-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+}
+
+.suggested-question {
+    width: auto;
+    min-width: 0;
+    padding: 8px 11px;
+
+    background: #ffffff;
+    border: 1px solid #dbe2ea;
+    border-radius: 7px;
+
+    color: #315b8c;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.4;
+
+    text-align: left;
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.suggested-question:hover {
+    background: #f6f9fc;
+    border-color: #315b8c;
+}
+
+/* ==========================================
+   NO SOURCE MESSAGE
+========================================== */
+
+.no-citation {
+    color: #8a94a3;
+    font-size: 11px;
+}
+
+/* ==========================================
+   EMPLOYEE MOBILE
+========================================== */
+
+@media (max-width: 700px) {
+
+    .employee-home {
+        padding: 40px 0 32px;
+    }
+
+    .employee-home .hero h2 {
+        font-size: 28px;
+    }
+
+    .demo-questions {
+        grid-template-columns: 1fr;
+        max-width: 560px;
+    }
+
+    .demo-title {
+        grid-column: auto;
+    }
+
+    .demo-question {
+        min-height: auto;
+    }
+
+    .employee-home .question-card {
+        padding: 17px;
+    }
+
+    .employee-home .answer-card {
+        padding: 19px;
+    }
+}
+
+
+/* =========================================================
+   FINAL EMPLOYEE HOME LAYOUT
+   ========================================================= */
+
+/* Main employee area */
+.employee-home {
+    width: 100% !important;
+    max-width: 820px !important;
+
+    margin: 0 auto !important;
+    padding: 34px 0 30px !important;
+
+    min-height: 0 !important;
+    height: auto !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+
+    transform: none !important;
+}
+
+
+/* =========================================================
+   HERO
+   ========================================================= */
+
+.employee-home .hero {
+    width: 100% !important;
+
+    margin: 0 0 22px 0 !important;
+    padding: 0 !important;
+
+    text-align: center !important;
+}
+
+.employee-home .hero h2 {
+    margin: 12px 0 0 0 !important;
+
+    font-size: 34px !important;
+    line-height: 1.2 !important;
+    letter-spacing: -0.7px !important;
+}
+
+.employee-home .hero p {
+    margin: 7px 0 0 0 !important;
+}
+
+
+/* =========================================================
+   TRY ASKING
+   ========================================================= */
+
+.employee-home .demo-questions {
+    width: 100% !important;
+    max-width: 720px !important;
+
+    margin: 22px auto 0 !important;
+    padding: 0 !important;
+
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 10px !important;
+}
+
+.employee-home .demo-title {
+    grid-column: 1 / -1 !important;
+
+    margin: 0 0 1px 0 !important;
+    padding: 0 !important;
+
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.7px !important;
+    text-transform: uppercase !important;
+
+    color: #777 !important;
+    text-align: left !important;
+}
+
+.employee-home .demo-question {
+    width: 100% !important;
+    min-height: 62px !important;
+
+    margin: 0 !important;
+    padding: 11px 13px !important;
+
+    border: 1px solid #e0e4e9 !important;
+    border-radius: 9px !important;
+
+    background: #fff !important;
+    color: #26384d !important;
+
+    font-family: inherit !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    line-height: 1.4 !important;
+
+    text-align: left !important;
+
+    cursor: pointer !important;
+
+    box-shadow: 0 2px 7px rgba(20, 30, 45, 0.035) !important;
+
+    transition: all 0.18s ease !important;
+}
+
+.employee-home .demo-question:hover {
+    background: #fafbfd !important;
+    border-color: #c8d1dc !important;
+
+    box-shadow: 0 4px 12px rgba(20, 30, 45, 0.06) !important;
+
+    transform: translateY(-1px) !important;
+}
+
+
+/* =========================================================
+   ASK A QUESTION — COMPACT
+   ========================================================= */
+
+.employee-home .question-card {
+    width: 100% !important;
+
+    margin: 0 !important;
+    margin-top: 0 !important;
+
+    padding: 16px 18px 13px !important;
+
+    height: auto !important;
+    min-height: 0 !important;
+
+    flex: none !important;
+
+    border-radius: 12px !important;
+}
+
+
+/* Label */
+
+.employee-home .question-card .section-label {
+    margin: 0 !important;
+}
+
+
+/* Textarea */
+
+.employee-home .question-card textarea {
+    display: block !important;
+
+    width: 100% !important;
+
+    height: 64px !important;
+    min-height: 64px !important;
+    max-height: 110px !important;
+
+    margin: 8px 0 0 0 !important;
+    padding: 10px 12px !important;
+
+    box-sizing: border-box !important;
+
+    font-family: inherit !important;
+    font-size: 12px !important;
+    line-height: 1.45 !important;
+
+    resize: vertical !important;
+}
+
+
+/* Question footer */
+
+.employee-home .question-card .question-footer {
+    width: 100% !important;
+
+    margin: 8px 0 0 0 !important;
+    padding: 0 !important;
+
+    min-height: 32px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 15px !important;
+}
+
+.employee-home .question-card .helper-text {
+    font-size: 10px !important;
+    line-height: 1.4 !important;
+}
+
+.employee-home .question-card #askButton {
+    flex-shrink: 0 !important;
+
+    padding: 8px 14px !important;
+
+    font-size: 11px !important;
+}
+
+
+/* =========================================================
+   ANSWER
+   ========================================================= */
+
+.employee-home .answer-card {
+    width: 100% !important;
+
+    margin: 16px 0 0 0 !important;
+
+    padding: 18px !important;
+
+    height: auto !important;
+    min-height: 0 !important;
+
+    flex: none !important;
+}
+
+
+/* =========================================================
+   YOU MIGHT ALSO ASK
+   ========================================================= */
+
+.employee-home .suggested-questions {
+    width: 100% !important;
+
+    margin: 12px 0 0 0 !important;
+    padding: 0 2px !important;
+}
+
+.employee-home .suggested-title {
+    margin: 0 0 8px 0 !important;
+
+    font-size: 12px !important;
+    font-weight: 600 !important;
+
+    color: #667080 !important;
+}
+
+.employee-home .suggested-list {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 7px !important;
+}
+
+.employee-home .suggested-question {
+    width: auto !important;
+    min-width: 0 !important;
+
+    margin: 0 !important;
+    padding: 8px 11px !important;
+
+    border: 1px solid #dbe2ea !important;
+    border-radius: 7px !important;
+
+    background: #fff !important;
+    color: #315b8c !important;
+
+    font-family: inherit !important;
+    font-size: 11px !important;
+    font-weight: 500 !important;
+    line-height: 1.4 !important;
+
+    cursor: pointer !important;
+}
+
+.employee-home .suggested-question:hover {
+    background: #f6f9fc !important;
+    border-color: #315b8c !important;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .employee-home {
+        padding: 28px 14px 25px !important;
+    }
+
+    .employee-home .hero h2 {
+        font-size: 28px !important;
+    }
+
+    .employee-home .demo-questions {
+        grid-template-columns: 1fr !important;
+    }
+
+    .employee-home .demo-title {
+        grid-column: auto !important;
+    }
+
+    .employee-home .question-card {
+        padding: 15px !important;
+    }
+
+    .employee-home .question-card .question-footer {
+        align-items: flex-end !important;
+    }
+
+    .employee-home .question-card .helper-text {
+        max-width: 60% !important;
+    }
+}
+
+/* =========================================
+   FINAL EMPLOYEE PAGE DESIGN
+   ========================================= */
+
+main.employee-home {
+    width: min(820px, calc(100% - 40px)) !important;
+    max-width: 820px !important;
+    margin: 0 auto !important;
+    padding: 42px 0 35px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0 !important;
+}
+
+/* Hero */
+.employee-home .hero p {
+    margin: 9px auto 0 !important;
+    color: #7b8798 !important;
+    font-size: 13px !important;
+    font-weight: 400 !important;
+    letter-spacing: 0.1px !important;
+    line-height: 1.5 !important;
+}
+
+.employee-home .hero-badge {
+    padding: 7px 13px !important;
+    font-size: 10px !important;
+}
+
+.employee-home .hero h2 {
+    margin: 15px 0 0 !important;
+    font-size: 34px !important;
+    line-height: 1.2 !important;
+    letter-spacing: -0.8px !important;
+}
+
+.employee-home .hero p {
+    width: 100% !important;
+    max-width: 520px !important;
+    margin: 8px auto 0 !important;
+
+    text-align: center !important;
+
+    color: #71809a !important;
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    line-height: 1.5 !important;
+}
+
+/* Try asking */
+.employee-home .demo-questions {
+    width: 100% !important;
+    max-width: 720px !important;
+    margin: 23px auto 0 !important;
+
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 10px !important;
+}
+
+.employee-home .demo-title {
+    grid-column: 1 / -1 !important;
+    margin: 0 0 1px !important;
+
+    color: #7a8490 !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.8px !important;
+    text-transform: uppercase !important;
+    text-align: left !important;
+}
+
+.employee-home .demo-question {
+    width: 100% !important;
+    min-height: 62px !important;
+
+    margin: 0 !important;
+    padding: 11px 13px !important;
+
+    background: #ffffff !important;
+    border: 1px solid #dfe5ec !important;
+    border-radius: 10px !important;
+
+    color: #26384d !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    line-height: 1.45 !important;
+    text-align: left !important;
+
+    box-shadow: 0 2px 8px rgba(23, 32, 51, 0.04) !important;
+    transition: all 0.2s ease !important;
+}
+
+.employee-home .demo-question:hover {
+    background: #f9fbfd !important;
+    border-color: #bfcbd8 !important;
+    box-shadow: 0 5px 14px rgba(23, 32, 51, 0.07) !important;
+    transform: translateY(-1px) !important;
+}
+
+
+/* =========================================
+   ASK A QUESTION
+   ========================================= */
+
+.employee-home .question-card {
+    width: 100% !important;
+    max-width: 820px !important;
+
+    margin: 28px 0 0 !important;
+    padding: 18px 20px 15px !important;
+
+    background: #ffffff !important;
+    border: 1px solid #e1e6ec !important;
+    border-radius: 13px !important;
+
+    box-shadow: 0 5px 20px rgba(23, 32, 51, 0.045) !important;
+}
+
+.employee-home .question-card .section-label {
+    margin: 0 !important;
+    color: #738096 !important;
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    letter-spacing: 1px !important;
+}
+
+.employee-home .question-card textarea {
+    display: block !important;
+
+    width: 100% !important;
+    height: 72px !important;
+    min-height: 72px !important;
+    max-height: 120px !important;
+
+    margin: 9px 0 0 !important;
+    padding: 11px 13px !important;
+
+    background: #fbfcfe !important;
+    border: 1px solid #dfe5ec !important;
+    border-radius: 9px !important;
+
+    color: #172033 !important;
+    font-family: inherit !important;
+    font-size: 13px !important;
+    line-height: 1.5 !important;
+
+    resize: vertical !important;
+    outline: none !important;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.employee-home .question-card textarea:focus {
+    border-color: #9eb4cc !important;
+    box-shadow: 0 0 0 3px rgba(49, 91, 140, 0.07) !important;
+}
+
+.employee-home .question-card textarea::placeholder {
+    color: #9aa5b4 !important;
+}
+
+
+/* Footer inside question card */
+.employee-home .question-footer {
+    width: 100% !important;
+
+    margin: 9px 0 0 !important;
+    padding: 0 !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+
+    gap: 15px !important;
+}
+
+.employee-home .helper-text {
+    color: #8a94a3 !important;
+    font-size: 10px !important;
+    line-height: 1.4 !important;
+}
+
+.employee-home #askButton {
+    flex-shrink: 0 !important;
+
+    padding: 9px 15px !important;
+    border-radius: 7px !important;
+
+    background: #315b8c !important;
+    font-size: 11px !important;
+}
+
+.employee-home #askButton:hover {
+    background: #264a75 !important;
+}
+
+
+/* =========================================
+   ANSWER
+   ========================================= */
+
+.employee-home .answer-card {
+    width: 100% !important;
+    max-width: 820px !important;
+
+    margin: 16px 0 0 !important;
+    padding: 20px !important;
+
+    border-radius: 13px !important;
+}
+
+
+/* =========================================
+   YOU MIGHT ALSO ASK
+   ========================================= */
+
+.employee-home .suggested-questions {
+    width: 100% !important;
+    max-width: 820px !important;
+
+    margin: 12px 0 0 !important;
+    padding: 0 2px !important;
+}
+
+.employee-home .suggested-title {
+    margin: 0 0 8px !important;
+
+    color: #667080 !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+}
+
+.employee-home .suggested-list {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 7px !important;
+}
+
+.employee-home .suggested-question {
+    width: auto !important;
+    min-width: 0 !important;
+
+    margin: 0 !important;
+    padding: 8px 11px !important;
+
+    background: #ffffff !important;
+    border: 1px solid #dbe2ea !important;
+    border-radius: 7px !important;
+
+    color: #315b8c !important;
+    font-size: 11px !important;
+    font-weight: 500 !important;
+}
+
+
+/* =========================================
+   MOBILE
+   ========================================= */
+
+@media (max-width: 700px) {
+
+    main.employee-home {
+        width: calc(100% - 28px) !important;
+        padding: 32px 0 28px !important;
+    }
+
+    .employee-home .hero h2 {
+        font-size: 28px !important;
+    }
+
+    .employee-home .demo-questions {
+        grid-template-columns: 1fr !important;
+    }
+
+    .employee-home .demo-question {
+        min-height: auto !important;
+    }
+
+    .employee-home .question-card {
+        padding: 16px !important;
+        margin-top: 22px !important;
+    }
+
+    .employee-home .question-footer {
+        align-items: flex-end !important;
+    }
+
+    .employee-home .helper-text {
+        max-width: 60% !important;
+    }
+}
+
+.employee-home .hero-subtitle {
+    margin: 10px auto 0 !important;
+    color: #667a96 !important;
+    font-size: 15px !important;
+    font-weight: 400 !important;
+    line-height: 1.5 !important;
+    text-align: center !important;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* =========================================================
+   FINAL POLISH — EMPLOYEE UI
+   Keeps the existing layout and functionality
+   ========================================================= */
+
+/* ---------- Page background ---------- */
+
+body {
+    background:
+        linear-gradient(180deg,
+            #f7f9fc 0%,
+            #f4f7fa 55%,
+            #f7f9fc 100%) !important;
+}
+
+
+/* ---------- Header ---------- */
+
+.topbar {
+    background: rgba(247, 249, 252, 0.92) !important;
+    backdrop-filter: blur(8px);
+}
+
+.brand-icon {
+    background: #edf4fc !important;
+    color: #315b8c !important;
+    border: 1px solid #e1ebf5 !important;
+}
+
+.portal-label {
+    background: #ffffff !important;
+    border-color: #dce4ed !important;
+    transition: all 0.2s ease;
+}
+
+.portal-label:hover {
+    border-color: #c4d2e0 !important;
+    background: #f9fbfd !important;
+}
+
+
+/* ---------- Hero ---------- */
+
+.employee-home .hero-badge {
+    background: #eef5fb !important;
+    border-color: #d9e6f2 !important;
+    box-shadow: 0 2px 8px rgba(49, 91, 140, 0.04);
+}
+
+.employee-home .hero h2 {
+    color: #14243a !important;
+    font-weight: 700 !important;
+}
+
+.employee-home .hero p {
+    width: 100% !important;
+    max-width: 520px !important;
+    margin: 8px auto 0 !important;
+
+    text-align: center !important;
+
+    color: #71809a !important;
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    line-height: 1.5 !important;
+}
+
+
+/* ---------- Try Asking ---------- */
+
+.employee-home .demo-questions {
+    max-width: 720px !important;
+    margin-top: 23px !important;
+}
+
+.employee-home .demo-title {
+    color: #718096 !important;
+    font-size: 10px !important;
+    letter-spacing: 1px !important;
+}
+
+.employee-home .demo-question {
+    position: relative;
+
+    background: rgba(255, 255, 255, 0.96) !important;
+    border: 1px solid #dce4ec !important;
+    border-radius: 10px !important;
+
+    color: #26384d !important;
+
+    box-shadow:
+        0 2px 6px rgba(23, 32, 51, 0.025),
+        0 5px 15px rgba(23, 32, 51, 0.025) !important;
+
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease !important;
+}
+
+.employee-home .demo-question:hover {
+    background: #ffffff !important;
+    border-color: #b9c9d9 !important;
+
+    box-shadow:
+        0 5px 14px rgba(23, 32, 51, 0.06) !important;
+
+    transform: translateY(-2px) !important;
+}
+
+.employee-home .demo-question:active {
+    transform: translateY(0) !important;
+}
+
+
+/* ---------- Ask Question Card ---------- */
+
+.employee-home .question-card {
+    margin-top: 28px !important;
+
+    background: rgba(255, 255, 255, 0.98) !important;
+    border: 1px solid #dce4ec !important;
+    border-radius: 13px !important;
+
+    box-shadow:
+        0 4px 12px rgba(23, 32, 51, 0.035),
+        0 10px 28px rgba(23, 32, 51, 0.035) !important;
+}
+
+
+/* Label */
+
+.employee-home .question-card .section-label {
+    color: #718096 !important;
+    font-size: 10px !important;
+    letter-spacing: 1px !important;
+}
+
+
+/* Textarea */
+
+.employee-home .question-card textarea {
+    background: #fbfcfe !important;
+    border: 1px solid #dce4ec !important;
+    border-radius: 9px !important;
+
+    color: #172033 !important;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease !important;
+}
+
+.employee-home .question-card textarea:hover {
+    border-color: #cbd6e1 !important;
+}
+
+.employee-home .question-card textarea:focus {
+    background: #ffffff !important;
+    border-color: #91aac3 !important;
+
+    box-shadow:
+        0 0 0 3px rgba(49, 91, 140, 0.07) !important;
+}
+
+
+/* ---------- Ask Button ---------- */
+
+.employee-home #askButton {
+    background: #315b8c !important;
+    border-radius: 8px !important;
+
+    box-shadow:
+        0 3px 8px rgba(49, 91, 140, 0.16) !important;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease !important;
+}
+
+.employee-home #askButton:hover {
+    background: #284f7d !important;
+
+    box-shadow:
+        0 5px 12px rgba(49, 91, 140, 0.20) !important;
+
+    transform: translateY(-1px) !important;
+}
+
+.employee-home #askButton:active {
+    transform: translateY(0) !important;
+}
+
+
+/* ---------- Helper Text ---------- */
+
+.employee-home .helper-text {
+    color: #8490a0 !important;
+}
+
+
+/* ---------- Answer Card ---------- */
+
+.employee-home .answer-card {
+    background: #ffffff !important;
+    border: 1px solid #dce4ec !important;
+    border-radius: 13px !important;
+
+    box-shadow:
+        0 5px 20px rgba(23, 32, 51, 0.045) !important;
+}
+
+.employee-home .answer-box {
+    background: #fafcfe !important;
+    border-color: #e0e6ed !important;
+}
+
+
+/* ---------- Citations ---------- */
+
+.employee-home .citation {
+    background: #ffffff !important;
+    border-color: #e0e6ed !important;
+    border-left-color: #315b8c !important;
+
+    transition:
+        box-shadow 0.2s ease,
+        border-color 0.2s ease !important;
+}
+
+.employee-home .citation:hover {
+    border-color: #cbd6e1 !important;
+    border-left-color: #315b8c !important;
+
+    box-shadow:
+        0 3px 10px rgba(23, 32, 51, 0.04) !important;
+}
+
+
+/* ---------- You Might Also Ask ---------- */
+
+.employee-home .suggested-questions {
+    margin-top: 14px !important;
+}
+
+.employee-home .suggested-title {
+    color: #687386 !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+}
+
+.employee-home .suggested-question {
+    background: #ffffff !important;
+    border: 1px solid #dbe3eb !important;
+    color: #315b8c !important;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease !important;
+}
+
+.employee-home .suggested-question:hover {
+    background: #f6f9fc !important;
+    border-color: #afc1d3 !important;
+    transform: translateY(-1px) !important;
+}
+
+
+/* ---------- Footer ---------- */
+
+footer {
+    color: #8a94a3 !important;
+}
+
+footer a {
+    color: #315b8c !important;
+}
