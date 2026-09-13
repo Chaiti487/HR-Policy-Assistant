@@ -1,3 +1,10 @@
+### Demo Video Link
+
+
+A short demonstration of the **Company HR Policy Assistant** showing the complete application workflow, including the Employee Portal, policy-based question answering, citations, unsupported questions, and the Admin Portal.
+
+▶️ **[Watch the Demo Video](https://youtu.be/Lh5hTp1uBnY)**
+
 # Company HR Policy Assistant
 
 An AI-powered HR Policy Assistant that allows employees to ask questions about company HR policies and receive grounded answers with policy source citations.
@@ -180,6 +187,7 @@ The Employee Portal includes a demo video that demonstrates the main application
 * Using the Admin Portal to upload policy documents
 
 The demo video is provided through YouTube and can be accessed directly from the Employee Portal.
+
 
 ---
 
